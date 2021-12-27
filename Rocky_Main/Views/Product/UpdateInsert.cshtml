@@ -1,0 +1,132 @@
+﻿@using Rocky_Utility
+@model Rocky_Models.ViewModels.ProductVM
+
+@{ var title = "Create Product";}
+
+<form method="post" enctype="multipart/form-data">
+    @if (Model.Product.Id != 0)
+    {
+        title = "Edit Product";
+        <input asp-for="Product.Id" hidden />
+    }
+
+    <div class="border p-3">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group row">
+            <h2 class="text-info pl-3">@title</h2>
+        </div>
+        <div class="row">
+            <div class="col-8">
+                <div class="form-group row">
+                    <div class="col-4">
+                        @Html.LabelFor(m => m.Product.ProductName, "Name")
+                    </div>
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.Product.ProductName, "", new { @class = "form-control" })
+                        <span asp-validation-for="Product.ProductName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        @Html.LabelFor(m => m.Product.Price, "Price")
+                    </div>
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.Product.Price, new { @type = "number", @class = "form-control" })
+                        <span asp-validation-for="Product.Price" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        @Html.LabelFor(m => m.Product.ShortDescription, "Short Description")
+                    </div>
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.Product.ShortDescription, new { @class = "form-control" })
+                        <span asp-validation-for="Product.ShortDescription" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        @Html.LabelFor(m => m.Product.Description, "Description")
+                    </div>
+                    <div class="col-8">
+                        @Html.TextAreaFor(m => m.Product.Description, new { @class = "form-control summernote" })
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        @Html.LabelFor(m => m.Product.CategoryId, "Product Category")
+                    </div>
+                    <div class="col-8">
+                        @Html.DropDownListFor(m => m.Product.CategoryId, Model.CategorySelectList, "--Select Category--", new { @class = "form-select" })
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        @Html.LabelFor(m => m.Product.ApplicationTypeId, "Application Type Category")
+                    </div>
+                    <div class="col-8">
+                        @Html.DropDownListFor(m => m.Product.ApplicationTypeId, Model.ApplicationTypeSelectList, "--Select Application Type--", new { @class = "form-select" })
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        @Html.LabelFor(m => m.Product.Image, "Image")
+                    </div>
+                    <div class="col-8">
+                        <input type="file" name="files" id="uploadBox" class="form-control align-self-center" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-8 offset-4 row">
+                        <div class="col">
+                            @if (Model.Product.Id != 0)
+                            {
+                                <input type="submit" class="btn btn-info w-100" value="Update" />
+                            }
+                            else
+                            {
+                                <input type="submit" onclick="return validateInput()" class="btn btn-primary w-100" value="Create" />
+                            }
+                        </div>
+                        <div class="col">
+                            <a asp-action="Index" class="btn btn-success w-100">
+                                <i class="fas fa-sign-out-alt"></i> &nbsp; Back
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                @if (Model.Product.Image != null)
+                {
+                    <img src="@Constants.ImagePath@Model.Product.Image" style="width:100%; border-radius:5px; border:1px solid black">
+                }
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+    <script>
+        $(document).ready(function () {
+            $('.summernote').summernote({
+                height: 250
+            });
+        });
+        function validateInput() {
+            if ($("#uploadBox")[0].value == '') {
+                Swal.fire(
+                    'Error!',
+                    'Please upload an image!',
+                    'error'
+                )
+                return false;
+            }
+            return true;
+        }
+    </script>
+}
+
