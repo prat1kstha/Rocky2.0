@@ -9,7 +9,7 @@ namespace Rocky_DataAccess.Repository.IRepository
 {
     public interface IRepository<T> where T : class
     {
-        T Find(int id);
+        T Find(int? id);
 
         IEnumerable<T> GetAll(
             Expression<Func<T, bool>> filter = null,
@@ -17,7 +17,6 @@ namespace Rocky_DataAccess.Repository.IRepository
             string includeProperties = null,
             bool isTracking = true
             );
-
 
         T FirstOrDefault(
             Expression<Func<T, bool>> filter = null,

@@ -25,7 +25,7 @@ namespace Rocky_DataAccess.Repository
             dbSet.Add(entity);
         }
 
-        public T Find(int id)
+        public T Find(int? id)
         {
             return dbSet.Find(id);
         }
