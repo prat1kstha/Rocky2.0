@@ -49,7 +49,10 @@ namespace Rocky
                 options.Cookie.IsEssential = true;
             });
 
+
+            //RepositoryRegistration
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IApplicationTypeRepository, ApplicationTypeRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
