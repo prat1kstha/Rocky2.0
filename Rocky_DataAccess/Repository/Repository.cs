@@ -30,7 +30,7 @@ namespace Rocky_DataAccess.Repository
             return dbSet.Find(id);
         }
 
-        public T FirstorDefault(Expression<Func<T, bool>> filter = null, string includeProperties = null, bool isTracking = true)
+        public T FirstOrDefault(Expression<Func<T, bool>> filter = null, string includeProperties = null, bool isTracking = true)
         {
             IQueryable<T> query = dbSet;
             if (filter != null)
