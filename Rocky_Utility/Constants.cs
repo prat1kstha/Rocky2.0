@@ -15,5 +15,7 @@ namespace Rocky_Utility
         public const string EmailAdmin = "animezon.stha@gmail.com";
         public const string CategoryName = "Category";
         public const string ApplicationTypeName = "ApplicationType";
+        public const string Success = "Success";
+        public const string Error = "Error";
     }
 }

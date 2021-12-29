@@ -104,6 +104,7 @@ namespace Rocky.Controllers
                     productVM.Product.Image = fileName + extension;
 
                     _prodRepo.Add(productVM.Product);
+                    TempData[Constants.Success] = "Data added successfully";
                 }
                 else
                 {
@@ -135,6 +136,7 @@ namespace Rocky.Controllers
                     }
 
                     _prodRepo.Update(productVM.Product);
+                    TempData[Constants.Success] = "Data updated successfully";
                 }
                 _prodRepo.Save();
                 return RedirectToAction("Index");
