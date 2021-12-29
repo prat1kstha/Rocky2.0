@@ -38,8 +38,6 @@ namespace Rocky.Controllers
             _appUserRepo = appUserRepo;
             _inquiryDetailRepo = inquiryDetailRepo;
             _inquiryHeaderRepo = inquiryHeaderRepo;
-
-
         }
         public IActionResult Index()
         {
@@ -142,6 +140,7 @@ namespace Rocky.Controllers
                 _inquiryDetailRepo.Add(inquiryDetail);
             }
             _inquiryDetailRepo.Save();
+            TempData[Constants.Success] = "Cart updated successfully";
 
             return RedirectToAction(nameof(InquiryConfirmation));
         }
@@ -164,6 +163,7 @@ namespace Rocky.Controllers
             shoppingCartList.Remove(shoppingCartList.FirstOrDefault(u => u.ProductId == id));
 
             HttpContext.Session.Set(Constants.SessionCart, shoppingCartList);
+            TempData[Constants.Error] = "Item removed";
 
             return RedirectToAction(nameof(Index));
         }
