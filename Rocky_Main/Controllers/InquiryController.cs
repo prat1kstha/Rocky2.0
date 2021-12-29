@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Rocky_DataAccess;
 using Rocky_Utility;
 using Rocky_Models;
+using Rocky_Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace Rocky.Controllers
     {
         private readonly IInquiryDetailRepository _inquiryDetailRepo;
         private readonly IInquiryHeaderRepository _inquiryHeaderRepo;
+        [BindProperty]
+        public InquiryVM InquiryVM { get; set; }
 
         public InquiryController(IInquiryDetailRepository inquiryDetailRepo, IInquiryHeaderRepository inquiryHeaderRepo)
         {
@@ -26,6 +29,17 @@ namespace Rocky.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult Details(int id)
+        {
+            InquiryVM = new InquiryVM()
+            {
+                InquiryHeader = _inquiryHeaderRepo.FirstOrDefault(u => u.Id == id),
+                InquiryDetail = _inquiryDetailRepo.GetAll(u=>u.InquiryHeaderId == id, includeProperties:"Product")
+            };
+
+            return View(InquiryVM);
         }
 
         #region API Calls
