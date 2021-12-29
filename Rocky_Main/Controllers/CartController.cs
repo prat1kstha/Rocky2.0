@@ -38,8 +38,6 @@ namespace Rocky.Controllers
             _appUserRepo = appUserRepo;
             _inquiryDetailRepo = inquiryDetailRepo;
             _inquiryHeaderRepo = inquiryHeaderRepo;
-
-
         }
         public IActionResult Index()
         {
