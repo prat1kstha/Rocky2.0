@@ -77,9 +77,33 @@ namespace Rocky.Controllers
 
         public IActionResult Summary()
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            ApplicationUser applicationUser;
 
+            if (User.IsInRole(Constants.AdminRole))
+            {
+                if (HttpContext.Session.Get<int>(Constants.SessionInquiryId) != 0)
+                {
+                    //cart has been loaded using an Inquiry
+                    InquiryHeader inquiryHeader = _inquiryHeaderRepo.FirstOrDefault(u => u.Id == HttpContext.Session.Get<int>(Constants.SessionInquiryId));
+                    applicationUser = new ApplicationUser() 
+                    { 
+                        Email = inquiryHeader.Email, 
+                        FullName = inquiryHeader.FullName, 
+                        PhoneNumber = inquiryHeader.PhoneNumber 
+                    };
+                }
+                else
+                {
+                    applicationUser = new ApplicationUser();
+                }
+            }
+            else
+            {
+                var claimsIdentity = (ClaimsIdentity)User.Identity;
+                var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+                applicationUser = _appUserRepo.FirstOrDefault(u => u.Id == claim.Value);
+            }
+            
             //var userId = User.FindFirstValue(ClaimTypes.Name);
 
             List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
@@ -94,9 +118,15 @@ namespace Rocky.Controllers
 
             ProductUserVM = new ProductUserVM()
             {
-                ApplicationUser = _appUserRepo.FirstOrDefault(u => u.Id == claim.Value),
-                ProductList = productList.ToList()
+                ApplicationUser = applicationUser,
             };
+
+            foreach (var cartObj in shoppingCartList)
+            {
+                Product prodTemp = _prodRepo.FirstOrDefault(u => u.Id == cartObj.ProductId);
+                prodTemp.TempSqFt = cartObj.SqFt;
+                ProductUserVM.ProductList.Add(prodTemp);
+            }
             return View(ProductUserVM);
         }
 

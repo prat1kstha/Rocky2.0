@@ -13,7 +13,7 @@ using Rocky_DataAccess.Repository.IRepository;
 
 namespace Rocky.Controllers
 {
-    [Authorize(Constants.AdminRole)]
+    [Authorize(Roles = Constants.AdminRole)]
     public class InquiryController : Controller
     {
         private readonly IInquiryDetailRepository _inquiryDetailRepo;
