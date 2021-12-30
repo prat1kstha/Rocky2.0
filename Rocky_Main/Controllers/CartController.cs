@@ -49,22 +49,61 @@ namespace Rocky.Controllers
             }
 
             List<int> productInCart = shoppingCartList.Select(i => i.ProductId).ToList();
-            IEnumerable<Product> productList = _prodRepo.GetAll(u => productInCart.Contains(u.Id));
-            
+            IEnumerable<Product> productListTemp = _prodRepo.GetAll(u => productInCart.Contains(u.Id));
+            IList<Product> productList = new List<Product>();
+
+            foreach (var cartObj in shoppingCartList)
+            {
+                Product prodTemp = productListTemp.FirstOrDefault(u => u.Id == cartObj.ProductId);
+                prodTemp.TempSqFt = cartObj.SqFt;
+                productList.Add(prodTemp);
+            }
+
             return View(productList);
         }
 
         [HttpPost, ValidateAntiForgeryToken, ActionName("Index")]
-        public IActionResult IndexPost()
+        public IActionResult IndexPost(IEnumerable<Product> ProdList)
         {
+            List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
+            foreach (Product product in ProdList)
+            {
+                shoppingCartList.Add(new ShoppingCart { ProductId = product.Id, SqFt = product.TempSqFt });
+            }
+
+            HttpContext.Session.Set(Constants.SessionCart, shoppingCartList);
             return RedirectToAction(nameof(Summary));
         }
 
         public IActionResult Summary()
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            ApplicationUser applicationUser;
 
+            if (User.IsInRole(Constants.AdminRole))
+            {
+                if (HttpContext.Session.Get<int>(Constants.SessionInquiryId) != 0)
+                {
+                    //cart has been loaded using an Inquiry
+                    InquiryHeader inquiryHeader = _inquiryHeaderRepo.FirstOrDefault(u => u.Id == HttpContext.Session.Get<int>(Constants.SessionInquiryId));
+                    applicationUser = new ApplicationUser() 
+                    { 
+                        Email = inquiryHeader.Email, 
+                        FullName = inquiryHeader.FullName, 
+                        PhoneNumber = inquiryHeader.PhoneNumber 
+                    };
+                }
+                else
+                {
+                    applicationUser = new ApplicationUser();
+                }
+            }
+            else
+            {
+                var claimsIdentity = (ClaimsIdentity)User.Identity;
+                var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+                applicationUser = _appUserRepo.FirstOrDefault(u => u.Id == claim.Value);
+            }
+            
             //var userId = User.FindFirstValue(ClaimTypes.Name);
 
             List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
@@ -79,9 +118,15 @@ namespace Rocky.Controllers
 
             ProductUserVM = new ProductUserVM()
             {
-                ApplicationUser = _appUserRepo.FirstOrDefault(u => u.Id == claim.Value),
-                ProductList = productList.ToList()
+                ApplicationUser = applicationUser,
             };
+
+            foreach (var cartObj in shoppingCartList)
+            {
+                Product prodTemp = _prodRepo.FirstOrDefault(u => u.Id == cartObj.ProductId);
+                prodTemp.TempSqFt = cartObj.SqFt;
+                ProductUserVM.ProductList.Add(prodTemp);
+            }
             return View(ProductUserVM);
         }
 
@@ -165,6 +210,19 @@ namespace Rocky.Controllers
             HttpContext.Session.Set(Constants.SessionCart, shoppingCartList);
             TempData[Constants.Error] = "Item removed";
 
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public IActionResult UpdateCart(IEnumerable<Product> ProdList)
+        {
+            List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
+            foreach (Product product in ProdList)
+            {
+                shoppingCartList.Add(new ShoppingCart { ProductId = product.Id, SqFt = product.TempSqFt });
+            }
+
+            HttpContext.Session.Set(Constants.SessionCart, shoppingCartList);
             return RedirectToAction(nameof(Index));
         }
     }
