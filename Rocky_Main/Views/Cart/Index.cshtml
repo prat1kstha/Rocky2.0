@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Product>
+﻿@model List<Product>
 @using Rocky_Utility
 @{
     ViewData["Title"] = "Index";
@@ -27,44 +27,108 @@
                                 <div class="row" style="color:#821f3d">
                                     <div class="col-lg-2">
                                     </div>
-                                    <div class="col-12 col-lg-7">
-                                        Product Details
-                                    </div>
+                                    @if (User.IsInRole(Constants.AdminRole))
+                                    {
+                                        <div class="col-12 col-lg-3">
+                                            Product Details
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-12 col-lg-7">
+                                            Product Details
+                                        </div>
+                                    }
                                     <div class="col-12 col-lg-2">
                                         Price per sqft
                                     </div>
+                                    @if (User.IsInRole(Constants.AdminRole))
+                                    {
+                                        <div class="col-6 col-lg-2">
+                                            Sqft
+                                        </div>
+                                        <div class="col-6 col-lg-2">
+                                            Total Price
+                                        </div>
+                                    }
                                     <div class="col-6 col-sm-4 col-lg-1">
                                     </div>
                                 </div>
                             </div>
 
                             <hr />
-                            @foreach (var item in Model)
+                            @{
+                                var orderTotal = 0.0;
+                            }
+                            @for (int i = 0; i < Model.Count(); i++) 
                             {
+                                @Html.HiddenFor(u => Model[i].Id)
                                 <div class="row h-100">
                                     <div class="col-4 col-md-2 text-center py-2">
-                                        <img src="@Constants.ImagePath@item.Image" class="rounded" width="100%" />
+                                        <img src="@Constants.ImagePath@Model[i].Image" class="rounded" width="100%" />
                                     </div>
-                                    <div class="col-8 col-lg-7">
-                                        <h5>@item.ProductName</h5>
-                                        <div style="font-size:11px;">@item.ShortDescription</div>
-                                    </div>
+                                    @if (User.IsInRole(Constants.AdminRole))
+                                    {
+                                        <div class="col-8 col-lg-3">
+                                            <h5>@Model[i].ProductName</h5>
+                                            <div style="font-size:11px;">@Model[i].ShortDescription</div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-8 col-lg-7">
+                                            <h5>@Model[i].ProductName</h5>
+                                            <div style="font-size:11px;">@Model[i].ShortDescription</div>
+                                        </div>
+                                    }
+
                                     <div class="col-3 col-lg-2 pt-lg-4" style="font-size:11px;">
-                                        <span style="font-size:17px;">$ @item.Price</span>/ sqft
+                                        <span style="font-size:17px;">$ @Model[i].Price</span>/ sqft
 
                                     </div>
+                                    @if (User.IsInRole(Constants.AdminRole))
+                                    {
+                                        <div class="col-4 col-lg-2 pt-lg-4" style="font-size:11px;">
+                                            @Html.TextBoxFor(u => Model[i].TempSqFt, new { @class = "form-control" })
+
+                                        </div>
+                                        <div class="col-3 col-lg-2 pt-lg-4" style="font-size:11px;">
+                                            <span style="font-size:17px;">$ @(Model[i].Price* Model[i].TempSqFt)</span>
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+
+                                    }
                                     <div class="col-2 col-lg-1 p-0 pt-lg-4 text-center">
-                                        <a asp-action="Remove" asp-route-id="@item.Id" class="btn btn-outline-danger">
+                                        <a asp-action="Remove" asp-route-id="@Model[i].Id" class="btn btn-outline-danger">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </div>
                                 </div>
+                                orderTotal += Model[i].Price * Model[i].TempSqFt;
                                 <hr />
+                            }
+                            @if (User.IsInRole(Constants.AdminRole))
+                            {
+                                <div class="row">
+                                    <div class="col-12 text-right p-4" style="color:#821f3d">
+                                        Order Total : @string.Format("{0:c}", orderTotal)
+                                    </div>
+                                </div>
                             }
                         </div>
                         <div class="card-footer">
                             <div class="row">
-                                <div class="col-6 col-md-3 offset-md-9">
+                                <div class="col-6 col-md-3 offset-md-6">
+                                    @if (User.IsInRole(Constants.AdminRole))
+                                    {
+                                        <input type="submit" asp-action="UpdateCart" formethod="post" name="Update" value="Update Cart" 
+                                                class="btn btn-info form-control " />
+                                    }
+                                </div>
+                                <div class="col-6 col-md-3">
                                     <button type="submit" class="btn btn-success form-control ">
                                         <span>Continue</span>
                                     </button>

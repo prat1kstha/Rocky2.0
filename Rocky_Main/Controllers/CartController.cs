@@ -49,14 +49,29 @@ namespace Rocky.Controllers
             }
 
             List<int> productInCart = shoppingCartList.Select(i => i.ProductId).ToList();
-            IEnumerable<Product> productList = _prodRepo.GetAll(u => productInCart.Contains(u.Id));
-            
+            IEnumerable<Product> productListTemp = _prodRepo.GetAll(u => productInCart.Contains(u.Id));
+            IList<Product> productList = new List<Product>();
+
+            foreach (var cartObj in shoppingCartList)
+            {
+                Product prodTemp = productListTemp.FirstOrDefault(u => u.Id == cartObj.ProductId);
+                prodTemp.TempSqFt = cartObj.SqFt;
+                productList.Add(prodTemp);
+            }
+
             return View(productList);
         }
 
         [HttpPost, ValidateAntiForgeryToken, ActionName("Index")]
-        public IActionResult IndexPost()
+        public IActionResult IndexPost(IEnumerable<Product> ProdList)
         {
+            List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
+            foreach (Product product in ProdList)
+            {
+                shoppingCartList.Add(new ShoppingCart { ProductId = product.Id, SqFt = product.TempSqFt });
+            }
+
+            HttpContext.Session.Set(Constants.SessionCart, shoppingCartList);
             return RedirectToAction(nameof(Summary));
         }
 
@@ -165,6 +180,19 @@ namespace Rocky.Controllers
             HttpContext.Session.Set(Constants.SessionCart, shoppingCartList);
             TempData[Constants.Error] = "Item removed";
 
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public IActionResult UpdateCart(IEnumerable<Product> ProdList)
+        {
+            List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
+            foreach (Product product in ProdList)
+            {
+                shoppingCartList.Add(new ShoppingCart { ProductId = product.Id, SqFt = product.TempSqFt });
+            }
+
+            HttpContext.Session.Set(Constants.SessionCart, shoppingCartList);
             return RedirectToAction(nameof(Index));
         }
     }
