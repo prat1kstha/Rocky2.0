@@ -8,6 +8,7 @@ using Rocky_DataAccess.Repository.IRepository;
 using Rocky_Models;
 using Rocky_Models.ViewModels;
 using Rocky_Utility;
+using Rocky_Utility.BrainTree;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,13 +30,15 @@ namespace Rocky.Controllers
         private readonly IEmailSender _emailSender;
         private readonly IOrderDetailRepository _orderDetailRepo;
         private readonly IOrderHeaderRepository _orderHeaderRepo;
+        private readonly IBrainTreeGate _brain;
 
         [BindProperty]
         public ProductUserVM ProductUserVM { get; set; }
         public CartController(IProductRepository prodRepo, IApplicationUserRepository appUserRepo, 
             IInquiryDetailRepository inquiryDetailRepo, IInquiryHeaderRepository inquiryHeaderRepo,
             IOrderDetailRepository orderDetailRepo, IOrderHeaderRepository orderHeaderRepo,
-            IWebHostEnvironment webHostEnvironment, IEmailSender emailSender)
+            IWebHostEnvironment webHostEnvironment, IEmailSender emailSender,
+            IBrainTreeGate brain)
         {
             _prodRepo = prodRepo;
             _webHostEnvironment = webHostEnvironment;
@@ -45,6 +48,7 @@ namespace Rocky.Controllers
             _inquiryHeaderRepo = inquiryHeaderRepo;
             _orderDetailRepo = orderDetailRepo;
             _orderHeaderRepo = orderHeaderRepo;
+            _brain = brain;
         }
         public IActionResult Index()
         {
@@ -103,6 +107,11 @@ namespace Rocky.Controllers
                 {
                     applicationUser = new ApplicationUser();
                 }
+
+                var gateway = _brain.GetGateway();
+                var clientToken = gateway.ClientToken.Generate();
+                ViewBag.ClientToken = clientToken;
+
             }
             else
             {

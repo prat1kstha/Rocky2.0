@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RazorComponentsPreview;
 using Rocky_DataAccess;
 using Rocky_DataAccess.Repository;
 using Rocky_DataAccess.Repository.IRepository;
@@ -32,7 +33,8 @@ namespace Rocky
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-
+            services.AddRazorComponentsRuntimeCompilation();
+            
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(
                 Configuration.GetConnectionString("DefaultConnection")));
@@ -79,6 +81,7 @@ namespace Rocky
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseRazorComponentsRuntimeCompilation();
 
             app.UseRouting();
             app.UseAuthentication();
