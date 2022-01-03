@@ -11,6 +11,7 @@ using Rocky_DataAccess;
 using Rocky_DataAccess.Repository;
 using Rocky_DataAccess.Repository.IRepository;
 using Rocky_Utility;
+using Rocky_Utility.BrainTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,6 +50,8 @@ namespace Rocky
                 options.Cookie.IsEssential = true;
             });
 
+            services.Configure<BrainTreeSetting>(Configuration.GetSection("BrainTree"));
+            services.AddSingleton<IBrainTreeGate, BrainTreeGate>();
 
             //RepositoryRegistration
             services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -57,6 +60,8 @@ namespace Rocky
             services.AddScoped<IInquiryHeaderRepository, InquiryHeaderRepository>();
             services.AddScoped<IInquiryDetailRepository, InquiryDetailRepository>();
             services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+            services.AddScoped<IOrderHeaderRepository, OrderHeaderRepository>();
+            services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
