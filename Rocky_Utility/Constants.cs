@@ -17,5 +17,15 @@ namespace Rocky_Utility
         public const string ApplicationTypeName = "ApplicationType";
         public const string Success = "Success";
         public const string Error = "Error";
+
+
+        //Order Status
+        public const string StatusPending = "Pending";
+        public const string StatusApproved = "Approved";
+        public const string StatusProcessing = "Processing";
+        public const string StatusShipped = "Shipped";
+        public const string StatusCancelled = "Cancelled";
+        public const string StatusRefunded = "Refunded";
+
     }
 }
