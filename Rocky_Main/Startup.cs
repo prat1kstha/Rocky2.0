@@ -81,7 +81,7 @@ namespace Rocky
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseRazorComponentsRuntimeCompilation();
+            //app.UseRazorComponentsRuntimeCompilation();
 
             app.UseRouting();
             app.UseAuthentication();

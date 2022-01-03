@@ -177,17 +177,17 @@
     <script>
         var form = document.querySelector('#payment-form');
         var client_token = "@ViewBag.ClientToken";
-
+        debugger;
         braintree.dropin.create({
             authorization: client_token,
             container: '#dropin-container',
         }, function (createErr, instance) {
             form.addEventListener('submit', function () {
-                even.preventDefault();
+                event.preventDefault();
 
                 //Add the nonce to the form and submit
                 instance.requestPaymentMethod(function (err, payload) {
-                    // Submit payload.nonce to your server
+                    // Submit payload.nonce to your server   
                     document.querySelector("#nonce").value = payload.nonce;
                     form.submit();
                 });
