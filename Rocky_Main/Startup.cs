@@ -33,6 +33,7 @@ namespace Rocky
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddRazorPages().AddRazorRuntimeCompilation();
             services.AddRazorComponentsRuntimeCompilation();
             
             services.AddDbContext<ApplicationDbContext>(options =>
