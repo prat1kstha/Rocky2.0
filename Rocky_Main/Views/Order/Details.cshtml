@@ -1,4 +1,5 @@
 ﻿@model Rocky_Models.ViewModels.OrderVM
+@using Rocky_Utility 
 
 <form method="post">
     <input asp-for="OrderHeader.Id" hidden />
@@ -112,7 +113,7 @@
                             <div class="row my-1">
                                 <div class="col-9 offset-3">
                                     <input type="submit" value="Update Order Details" class="btn btn-warning form-control"
-                                           formaction="/Order/UpdateOrderDetails" formmethod="post" />
+                                           asp-action="UpdateOrderDetails" formmethod="post" />
                                 </div>
                             </div>
 
@@ -155,19 +156,24 @@
 
 
                             <br />
+                            @if (Model.OrderHeader.OrderStatus == Constants.StatusApproved)
+                            {
+                                <input type="submit" formmethod="post" asp-action="StartProcessing" value="Start Processing" class="btn btn-info form-control" />
+                            }
 
-                            <input type="submit" value="Start Processing" class="btn btn-info form-control" />
+                            @if (Model.OrderHeader.OrderStatus == Constants.StatusProcessing)
+                            {
+                                <input type="submit" formmethod="post" asp-action="ShipOrder" value="Ship Order" class="btn btn-primary form-control" />
+                            }
 
-                            <input type="submit" value="Ship Order" class="btn btn-primary form-control" />
-
-
-                            <div class="pt-2">
-                                <button type="submit"
-                                        class="btn btn-danger form-control"
-                                        formmethod="post">
-                                    Cancel Order
-                                </button>
-                            </div>
+                            @if (Model.OrderHeader.OrderStatus != Constants.StatusRefunded && Model.OrderHeader.OrderStatus != Constants.StatusCancelled)
+                            {
+                                <div class="pt-2">
+                                    <button type="submit" asp-action="CancelOrder" class="btn btn-danger form-control" formmethod="post">
+                                        Cancel Order
+                                    </button>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
