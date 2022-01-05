@@ -16,6 +16,8 @@ namespace Rocky.Controllers
         private readonly IOrderHeaderRepository _orderHeaderRepo;
         private readonly IOrderDetailRepository _orderDetailRepo;
         private readonly IBrainTreeGate _brain;
+        [BindProperty]
+        public OrderVM OrderVM { get; set; }
 
         public OrderController(IOrderHeaderRepository orderHeaderRepo, IOrderDetailRepository orderDetailRepo, IBrainTreeGate brain)
         {
@@ -54,6 +56,17 @@ namespace Rocky.Controllers
             }
 
             return View(orderListVM);
+        }
+
+        public IActionResult Details(int id)
+        {
+            OrderVM = new OrderVM()
+            {
+                OrderHeader = _orderHeaderRepo.Find(id),
+                OrderDetail = _orderDetailRepo.GetAll(u => u.OrderHeaderId == id, includeProperties: "Product")
+            };
+
+            return View(OrderVM);
         }
     }
 }
