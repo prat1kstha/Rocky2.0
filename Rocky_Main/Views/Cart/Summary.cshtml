@@ -34,7 +34,6 @@
                                     </div>
                                     <div class="col-9">
                                         <input type="text" class="form-control" asp-for="ApplicationUser.FullName" />
-                                        <span asp-validation-for="ApplicationUser.FullName" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="row my-1">
@@ -43,7 +42,6 @@
                                     </div>
                                     <div class="col-9">
                                         <input type="text" class="form-control" required asp-for="ApplicationUser.PhoneNumber" />
-                                        <span asp-validation-for="ApplicationUser.PhoneNumber" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="row my-1">
@@ -52,7 +50,6 @@
                                     </div>
                                     <div class="col-9">
                                         <input type="text" class="form-control" required asp-for="ApplicationUser.Email" />
-                                        <span asp-validation-for="ApplicationUser.Email" class="text-danger"></span>
                                     </div>
                                 </div>
                                 @if (User.IsInRole(Constants.AdminRole))
@@ -63,7 +60,6 @@
                                         </div>
                                         <div class="col-9">
                                             <input type="text" class="form-control" asp-for="ApplicationUser.StreetAddress" />
-                                            <span asp-validation-for="ApplicationUser.StreetAddress" class="text-danger"></span>
                                         </div>
                                     </div>
                                     <div class="row my-1">
@@ -72,7 +68,6 @@
                                         </div>
                                         <div class="col-9">
                                             <input type="text" class="form-control" asp-for="ApplicationUser.City" />
-                                            <span asp-validation-for="ApplicationUser.City" class="text-danger"></span>
                                         </div>
                                     </div>
                                     <div class="row my-1">
@@ -81,7 +76,6 @@
                                         </div>
                                         <div class="col-9">
                                             <input type="text" class="form-control" asp-for="ApplicationUser.State" />
-                                            <span asp-validation-for="ApplicationUser.State" class="text-danger"></span>
                                         </div>
                                     </div>
                                     <div class="row my-1">
@@ -90,7 +84,6 @@
                                         </div>
                                         <div class="col-9">
                                             <input type="text" class="form-control" asp-for="ApplicationUser.PostalCode" />
-                                            <span asp-validation-for="ApplicationUser.PostalCode" class="text-danger"></span>
                                         </div>
                                     </div>
                                 }
@@ -156,11 +149,11 @@
                         <div class="col-12 col-md-5 offset-md-7">
                             @if (@User.IsInRole(Constants.AdminRole))
                             {
-                                <button type="submit" id="submit-button" class="btn btn-success form-control">Submit Order</button>
+                                <button type="submit" id="submit-button" onclick="return validateInput()" class="btn btn-success form-control">Submit Order</button>
                             }
                             else
                             {
-                                <button type="submit" class="btn btn-primary form-control">Submit Inquiry</button>
+                                <button type="submit" onclick="return validateInput()" class="btn btn-primary form-control">Submit Inquiry</button>
                             }
                         </div>
                     </div>
@@ -193,6 +186,37 @@
                 });
             });
         });
+
+
+        function validateInput() {
+            var app_name = document.getElementById("ApplicationUser_FullName").value;
+            var app_phone = document.getElementById("ApplicationUser_PhoneNumber").value;
+            var app_email = document.getElementById("ApplicationUser_Email").value;
+            var app_street = document.getElementById("ApplicationUser_StreetAddress").value;
+            var app_postalcode = document.getElementById("ApplicationUser_PostalCode").value;
+            var app_city = document.getElementById("ApplicationUser_City").value;
+            var app_state = document.getElementById("ApplicationUser_State").value;
+
+            if (app_name.toString() == '' ||
+                app_phone.toString() == '' ||
+                app_email.toString() == '' ||
+                app_street.toString() == '' ||
+                app_postalcode.toString() == '' ||
+                app_city.toString() == '' ||
+                app_state.toString() == ''
+            ) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please enter all the information!',
+                });
+                return false;
+            }
+
+            return true;
+        }
+
+
     </script>
 }
 

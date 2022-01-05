@@ -89,13 +89,12 @@
                                     </div>
                                     @if (User.IsInRole(Constants.AdminRole))
                                     {
-                                        <div class="col-4 col-lg-2 pt-lg-4" style="font-size:11px;">
-                                            @Html.TextBoxFor(u => Model[i].TempSqFt, new { @class = "form-control" })
-
-                                        </div>
+                                <div class="col-4 col-lg-2 pt-lg-4" style="font-size:11px;">
+                                    @Html.TextBoxFor(u => Model[i].TempSqFt, new { @class = "form-control" })
+                                    <span asp-validation-for="@Model[i].TempSqFt" class="text-danger"></span>
+                                </div>
                                         <div class="col-3 col-lg-2 pt-lg-4" style="font-size:11px;">
-                                            <span style="font-size:17px;">$ @(Model[i].Price* Model[i].TempSqFt)</span>
-
+                                            <span style="font-size:17px;">$ @(Model[i].Price* Model[i].TempSqFt)</span>      
                                         </div>
                                     }
                                     else
@@ -145,4 +144,9 @@
 else
 {
     <h3>Please add items to Cart.</h3>
+}
+
+
+@section Scripts{ 
+<partial name="_ValidationScriptsPartial" />
 }
